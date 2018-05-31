@@ -10,8 +10,8 @@
 
 集成 openinstall SDK 到 Hbuilder iOS 项目中，请参考 [iOS 集成指南][README-iOS]
 
-[README-Android]: doc/README-Android.md
-[README-iOS]: doc/README-iOS.md
+[README-Android]: README/README-Android.md
+[README-iOS]: README/README-iOS.md
 ## 插件使用
 
 #### 引入 JS 文件
