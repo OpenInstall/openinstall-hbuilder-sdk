@@ -4,12 +4,14 @@
 
 ## Android 集成指南
 
-集成 openinstall SDK 到 Hbuilder Android 项目中，请参考 [Android 集成指南](doc/README-Android.md)
+集成 openinstall SDK 到 Hbuilder Android 项目中，请参考 [Android 集成指南][README-Android]
 
 ## iOS 集成指南
 
-集成 openinstall SDK 到 Hbuilder iOS 项目中，请参考 [iOS 集成指南](doc/README-iOS.md)
+集成 openinstall SDK 到 Hbuilder iOS 项目中，请参考 [iOS 集成指南][README-iOS]
 
+[README-Android]: doc/README-Android.md
+[README-iOS]: doc/README-iOS.md
 ## 插件使用
 
 #### 引入 JS 文件
