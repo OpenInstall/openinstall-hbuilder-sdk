@@ -56,13 +56,14 @@
 #### openinstall 的配置
 根据openinstall官方文档，在 `AndroidManifest.xml` 中做以下配置
 
-声明权限
+##### 声明权限
 ``` xml
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
-配置 AppKey 和 scheme 
+##### 配置 AppKey 和 scheme 
+从 [openinstall官网](https://www.openinstall.io/) 获取应用的 `AppKey` 和 `scheme`。将下面文档中的 `OPENINSTALL_APPKEY` 和 `OPENINSTALL_SCHEME` 替换
 ``` xml
 <application
     android:allowBackup="false"
