@@ -53,7 +53,7 @@
 #### openinstall 的配置
 
 ##### 初始化配置
-根据 `openinstall` 官方文档，在 `Info.plist` 文件中配置 `appKey` 键值对，在 `CFBundleURLTypes` 数组中添加应用对应的 scheme，如下：
+根据 `openinstall` 官方文档，在 `Info.plist` 文件中配置 `appKey` 键值对，如下：
 
 ``` plist
 	<key>com.openinstall.APP_KEY</key>
