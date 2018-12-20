@@ -60,6 +60,7 @@
 	<string>“从openinstall官网后台获取应用的appkey”</string>
 ```
 
+#### 以下为 `一键拉起` 功能的相关配置和代码
 ##### universal links配置
 对于 iOS，为确保能正常跳转，AppID 必须开启 Associated Domains 功能，请到 [苹果开发者网站](https://developer.apple.com)，选择 Certificate, Identifiers & Profiles，选择相应的 AppID，开启 Associated Domains。注意：当 AppID 重新编辑过之后，需要更新相应的 mobileprovision 证书。(详细步骤请看 [openinstall官网](https://www.openinstall.io) 后台文档，universal link 从后台获取)
 
