@@ -40,31 +40,18 @@
     float outtime = 10.0f;
     
     if (command.arguments.count > 2) {
-        if ([[command.arguments objectAtIndex:1] isKindOfClass:[NSString class]]) {
-            NSString *timeResult = [NSString stringWithFormat:@"%@",[command.arguments objectAtIndex:1]];
-            if ([self isPureInt:timeResult]||[self isPureFloat:timeResult]) {
-                outtime = [timeResult floatValue];
-            }
-        }else if([[command.arguments objectAtIndex:1] isKindOfClass:[NSNumber class]]){
+        if([[command.arguments objectAtIndex:1] isKindOfClass:[NSNumber class]]){
             NSNumber *timeResult = (NSNumber *)[command.arguments objectAtIndex:1];
             outtime = [timeResult floatValue];
         }
     }
     
     [[OpenInstallSDK defaultManager] getInstallParmsWithTimeoutInterval:outtime completed:^(OpeninstallData * _Nullable appData) {
+        NSLog(@"OpenInstall安装参数返回值:bindData:%@,channelCode:%@",appData.data,appData.channelCode);
         
-        NSString *channelID = @"";
-        NSString *datas = @"";
-        if (appData.data) {
-            datas = [self jsonStringWithObject:appData.data];
-        }
-        if (appData.channelCode) {
-            channelID = appData.channelCode;
-        }
-        NSDictionary *installDicResult = @{@"channelCode":channelID,@"bindData":datas};
+        NSDictionary *installDicResult = @{@"channelCode":appData.channelCode?:@"",@"bindData":appData.data?:@""};
 
         PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:installDicResult];
-
         [self toCallback:cbId withReslut:[result toJSONString]];
 
     }];
@@ -106,62 +93,11 @@
     
 }
 -(void)getWakeUpParams:(OpeninstallData *)appData{
-    
-    NSMutableDictionary *params = [[NSMutableDictionary alloc]init];
-    NSString *jsonStr = @"";
-    if (appData.data) {
-        jsonStr = [self jsonStringWithObject:appData.data];
-    }
-    [params addEntriesFromDictionary:@{@"bindData":jsonStr}];
-    [params addEntriesFromDictionary:@{@"channelCode":appData.channelCode?appData.channelCode:@""}];
-    
-    //    NSString *json = [self jsonStringWithObject:params];
-    
-    PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:params];
+    NSLog(@"OpenInstall拉起参数返回值:bindData:%@,channelCode:%@",appData.data,appData.channelCode);
+    NSDictionary *wakeUpDicResult = @{@"channelCode":appData.channelCode?:@"",@"bindData":appData.data?:@""};
+    PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:wakeUpDicResult];
     [self toCallback:self.wakeupId withReslut:[result toJSONString]];
     //    [self asyncWriteJavascript:[NSString stringWithFormat:@"OpeninstallUrlCallBack(%@)",json]];
-}
-
-- (BOOL)isPureInt:(NSString*)string{
-    
-    NSScanner* scan = [NSScanner scannerWithString:string];
-    
-    int val;
-    
-    return[scan scanInt:&val] && [scan isAtEnd];
-    
-}
-
-//判断是否为浮点形：
-
-- (BOOL)isPureFloat:(NSString*)string{
-    
-    NSScanner* scan = [NSScanner scannerWithString:string];
-    
-    float val;
-    
-    return[scan scanFloat:&val] && [scan isAtEnd];
-    
-}
-
-- (NSString *)jsonStringWithObject:(id)jsonObject{
-    // 将字典或者数组转化为JSON串
-    NSError *error = nil;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:jsonObject
-                                                       options:NSJSONWritingPrettyPrinted
-                                                         error:&error];
-    
-    NSString *jsonString = [[NSString alloc] initWithData:jsonData
-                                                 encoding:NSUTF8StringEncoding];
-    
-    if ([jsonString length] > 0 && error == nil){
-        
-        jsonString = [jsonString stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-        
-        return jsonString;
-    }else{
-        return @"";
-    }
 }
 
 @end

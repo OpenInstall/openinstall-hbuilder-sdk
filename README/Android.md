@@ -36,7 +36,7 @@
   ],
   "id": "H5E1BA598",
   "name": "OpenInstallPlugin",
-  // ...
+  
   "permissions": {
     "Console": {
       "description": "跟踪调试输出日志"
@@ -44,12 +44,12 @@
     "Events": {
       "description": "应用扩展事件"
     },
-    // openinstall plugin
+    
     "openinstall": {
       "description": "openinstall插件"
     }
   },
-  // ...
+  
 }
 ```
 
