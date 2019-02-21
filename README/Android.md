@@ -63,7 +63,9 @@
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
 ##### 配置 AppKey 和 scheme 
-从 [openinstall官网](https://www.openinstall.io/) 获取应用的 `AppKey` 和 `scheme`。将下面文档中的 `OPENINSTALL_APPKEY` 和 `OPENINSTALL_SCHEME` 替换
+从 [openinstall官网](https://www.openinstall.io/) 获取应用的 `AppKey` 和 `scheme`。将下面文档中的 `OPENINSTALL_APPKEY` 和 `OPENINSTALL_SCHEME` 替换。  
+（scheme的值详细获取位置：openinstall应用控制台->iOS集成->iOS应用配置）  
+
 ``` xml
 <application
     android:allowBackup="false"

@@ -62,8 +62,14 @@
 
 #### 以下为 `一键拉起` 功能的相关配置和代码
 ##### universal links配置
-对于 iOS，为确保能正常跳转，AppID 必须开启 Associated Domains 功能，请到 [苹果开发者网站](https://developer.apple.com)，选择 Certificate, Identifiers & Profiles，选择相应的 AppID，开启 Associated Domains。注意：当 AppID 重新编辑过之后，需要更新相应的 mobileprovision 证书。(详细步骤请看 [openinstall官网](https://www.openinstall.io) 后台文档，universal link 从后台获取)
 
+对于 iOS，为确保能正常跳转，AppID 必须开启 Associated Domains 功能，请到 [苹果开发者网站](https://developer.apple.com)，选择 Certificate, Identifiers & Profiles，选择相应的 AppID，开启 Associated Domains。注意：当 AppID 重新编辑过之后，需要更新相应的 mobileprovision 证书。(详细步骤请看 [iOS集成指南](https://www.openinstall.io/doc/ios_sdk.html))  
+
+- 在左侧导航器中点击您的项目
+- 选择 `Capabilities` 标签
+- 打开 `Associated Domains` 开关
+- 添加 openinstall 官网后台中应用对应的关联域名（openinstall应用控制台->iOS集成->iOS应用配置->关联域名(Associated Domains)）  
+  
 在AppDelegate中引入头文件，并添加通用链接(Universal Link)回调方法，委托openinstall插件来处理
 
 ``` objc
@@ -82,7 +88,9 @@
 ```
 
 ##### scheme配置
-在 `Info.plist` 文件中，在 `CFBundleURLTypes` 数组中添加应用对应的 scheme
+
+在 `Info.plist` 文件中，在 `CFBundleURLTypes` 数组中添加应用对应的 scheme，或者在工程“TARGETS-Info-URL Types”里快速添加，图文配置请看[iOS集成指南](https://www.openinstall.io/doc/ios_sdk.html)  
+（scheme的值详细获取位置：openinstall应用控制台->iOS集成->iOS应用配置）  
 
 ``` plist
 	<key>CFBundleURLTypes</key>
