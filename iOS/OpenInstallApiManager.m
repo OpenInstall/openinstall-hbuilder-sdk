@@ -49,7 +49,15 @@
     [[OpenInstallSDK defaultManager] getInstallParmsWithTimeoutInterval:outtime completed:^(OpeninstallData * _Nullable appData) {
         NSLog(@"OpenInstall安装参数返回值:bindData:%@,channelCode:%@",appData.data,appData.channelCode);
         
-        NSDictionary *installDicResult = @{@"channelCode":appData.channelCode?:@"",@"bindData":appData.data?:@""};
+        NSString *channelID = @"";
+        NSString *datas = @"";
+        if (appData.data) {
+            datas = [self jsonStringWithObject:appData.data];
+        }
+        if (appData.channelCode) {
+            channelID = appData.channelCode;
+        }
+        NSDictionary *installDicResult = @{@"channelCode":channelID,@"bindData":datas};
 
         PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:installDicResult];
         [self toCallback:cbId withReslut:[result toJSONString]];
@@ -94,10 +102,47 @@
 }
 -(void)getWakeUpParams:(OpeninstallData *)appData{
     NSLog(@"OpenInstall拉起参数返回值:bindData:%@,channelCode:%@",appData.data,appData.channelCode);
-    NSDictionary *wakeUpDicResult = @{@"channelCode":appData.channelCode?:@"",@"bindData":appData.data?:@""};
+    NSString *channelID = @"";
+    NSString *datas = @"";
+    if (appData.data) {
+        datas = [self jsonStringWithObject:appData.data];
+    }
+    if (appData.channelCode) {
+        channelID = appData.channelCode;
+    }
+    NSDictionary *wakeUpDicResult = @{@"channelCode":channelID,@"bindData":datas};
+
     PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:wakeUpDicResult];
     [self toCallback:self.wakeupId withReslut:[result toJSONString]];
     //    [self asyncWriteJavascript:[NSString stringWithFormat:@"OpeninstallUrlCallBack(%@)",json]];
+}
+
+- (NSString *)jsonStringWithObject:(id)jsonObject{
+    
+    id arguments = (jsonObject == nil ? [NSNull null] : jsonObject);
+    
+    NSArray* argumentsWrappedInArr = [NSArray arrayWithObject:arguments];
+    
+    NSString* argumentsJSON = [self cp_JSONString:argumentsWrappedInArr];
+    
+    argumentsJSON = [argumentsJSON substringWithRange:NSMakeRange(1, [argumentsJSON length] - 2)];
+    
+    return argumentsJSON;
+}
+- (NSString *)cp_JSONString:(NSArray *)array{
+    NSError *error = nil;
+    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:array
+                                                       options:0
+                                                         error:&error];
+    
+    NSString *jsonString = [[NSString alloc] initWithData:jsonData
+                                                 encoding:NSUTF8StringEncoding];
+    
+    if ([jsonString length] > 0 && error == nil){
+        return jsonString;
+    }else{
+        return @"";
+    }
 }
 
 @end
