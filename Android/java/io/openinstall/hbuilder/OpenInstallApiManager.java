@@ -63,15 +63,6 @@ public class OpenInstallApiManager extends StandardFeature {
         getWakeUp(intent, pWebview, callBackID);
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        // 由于 5+sdk 的 bug 导致 onNewIntent 未被回调
-//        if (webview != null && wakeupCallBackID != null) {
-//            getWakeUp(intent, webview, wakeupCallBackID);
-//        }
-    }
-
     private void getWakeUp(Intent intent, final IWebview pWebview, final String callBackID) {
         OpenInstall.getWakeUp(intent, new AppWakeUpAdapter() {
             @Override
