@@ -1,6 +1,7 @@
 # openinstall-hbuilder-sdk
 
-使用 dcloud 的 5+sdk 集成 openinstall
+使用 dcloud 的 5+sdk 集成 openinstall  
+uni-app集成openinstall请前往DCloud插件市场 https://ext.dcloud.net.cn/plugin?id=692 
 
 ## Android 集成指南
 
