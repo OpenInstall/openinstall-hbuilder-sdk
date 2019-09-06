@@ -5,7 +5,9 @@
 
 #### 拷贝相关文件
 
-拷贝Openinstall官方SDK(libOpenInstallSDK.a,OpeninstallSDK.h,OpeninstallData.h)和插件类(OpenInstallApiManager.h,OpenInstallApiManager.m)到项目工程中
+拷贝Openinstall官方SDK(libOpenInstallSDK.a,OpeninstallSDK.h,OpeninstallData.h)和插件类(OpenInstallApiManager.h,OpenInstallApiManager.m)到项目工程主目录下  
+
+**注意：iOS环境下不要过早的调用openinstall.js下的方法(plus.openinstall.xxxxx)，如在首页窗口未加载完就调用的话，有用户出现过TypeError:undefined is not an object的错误，请掌握好调用时机**
 
 #### 关联 JS 插件名和 iOS 原生类
 修改 `PandoraAPI.bundle` 中 `feature.plist` 文件，在其中添加JS插件别名和Native插件类的对应关系，SDK基座会根据对应关系查找并生成相应的Native对象并执行对应的方法。
