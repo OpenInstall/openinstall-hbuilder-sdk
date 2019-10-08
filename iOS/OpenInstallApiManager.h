@@ -14,6 +14,7 @@
 @interface OpenInstallApiManager : PGPlugin<OpenInstallDelegate>
 
 @property (nonatomic, copy)NSString *wakeupId;
+@property (nonatomic, strong)NSDictionary *wakeupDic;
 
 +(void)universalLinkHandler:(NSURL *)url;
 +(void)schemeUrlHandler:(NSURL *)url;

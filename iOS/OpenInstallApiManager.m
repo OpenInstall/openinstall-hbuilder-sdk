@@ -33,6 +33,12 @@
     
     NSString* cbId = [command.arguments objectAtIndex:0];
     self.wakeupId = cbId;
+    if (self.wakeupDic) {
+        PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:self.wakeupDic];
+        result.keepCallback = YES;
+        [self toCallback:self.wakeupId withReslut:[result toJSONString]];
+        self.wakeupDic = nil;
+    }
 }
 -(void)getInstall:(PGMethod*)command{
     
@@ -113,8 +119,12 @@
     NSDictionary *wakeUpDicResult = @{@"channelCode":channelID,@"bindData":datas};
 
     PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:wakeUpDicResult];
-    [self toCallback:self.wakeupId withReslut:[result toJSONString]];
-    //    [self asyncWriteJavascript:[NSString stringWithFormat:@"OpeninstallUrlCallBack(%@)",json]];
+    result.keepCallback = YES;
+    if (self.wakeupId) {
+        [self toCallback:self.wakeupId withReslut:[result toJSONString]];
+    }else{
+        self.wakeupDic = wakeUpDicResult;
+    }
 }
 
 - (NSString *)jsonStringWithObject:(id)jsonObject{
