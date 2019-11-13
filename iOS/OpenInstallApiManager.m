@@ -7,9 +7,7 @@
 //
 
 #import "OpenInstallApiManager.h"
-#import "PDRCoreAppFrame.h"
-#import "H5WEEngineExport.h"
-#import "PDRToolSystemEx.h"
+
 // 扩展插件中需要引入需要的系统库
 #import <LocalAuthentication/LocalAuthentication.h>
 
