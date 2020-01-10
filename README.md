@@ -66,3 +66,11 @@ function reportEffectPoint(){
     plus.openinstall.reportEffectPoint("effect_test", 1);
 }
 ```
+
+## 导出apk/api包并上传
+- 代码集成完毕后，需要导出安装包上传openinstall后台，openinstall会自动完成所有的应用配置工作。  
+- 上传完成后即可开始在线模拟测试，体验完整的App安装/拉起流程；待测试无误后，再完善下载配置信息。  
+
+下面是apk包的上传界面（后台截图）：  
+
+![上传安装包](res/guide2.jpg)
