@@ -98,7 +98,7 @@ public class OpenInstallApiManager extends StandardFeature {
                 }
                 JSUtil.execCallback(pWebview, callBackID, dataJson, JSUtil.OK, false);
             }
-        }, timeout * 1000);
+        }, timeout);
     }
 
     public void reportRegister(IWebview pWebview, JSONArray array) {
