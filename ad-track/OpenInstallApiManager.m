@@ -8,6 +8,8 @@
 
 #import "OpenInstallApiManager.h"
 
+#import <AdSupport/AdSupport.h>//需要使用idfa时引入
+
 @implementation OpenInstallApiManager
 
 #pragma mark 这个方法在使用WebApp方式集成时触发，WebView集成方式不触发
@@ -16,12 +18,9 @@
  * WebApp启动时触发
  * 需要在PandoraApi.bundle/feature.plist/注册插件里添加autostart值为true，global项的值设置为true
  */
-- (void) onAppStarted:(NSDictionary*)options{
-    NSLog(@"5+ WebApp启动时触发");
-    // 可以在这个方法里向Core注册扩展插件的JS
-    
-    [OpenInstallSDK initWithDelegate:self];
-    
+-(void)onAppStarted:(NSDictionary*)options{
+    NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];
 }
 
 -(void)registerWakeUpHandler:(PGMethod*)command{
