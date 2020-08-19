@@ -46,8 +46,6 @@
 
 @end
 
-
-
 @interface OpenInstallSDK : NSObject
 
 /**
@@ -78,6 +76,19 @@
  * @param delegate 委托方法所在的类的对象
  */
 +(void)initWithDelegate:(id<OpenInstallDelegate> _Nonnull)delegate;
+
+
+#pragma mark - added in v2.4.0
+/**
+ * 初始化sdk并传入广告标识符id（可选）
+ * ***调用该方法前，需在Info.plist文件中配置键值对,键为com.openinstall.APP_KEY不能修改，值为相应的应用的appKey，可在openinstall官方后台查看***
+ *
+ * @param adid 广告标识符，需用户自己获取并传入，默认为空，传入nil则与初始化方法 initwithDelegate: 一致
+ * @param delegate 委托方法所在的类的对象
+ * @discussion 1、只有需要使用“广告平台渠道”进行广告效果监测的用户才需调用，2、需开启后台开关，位置："iOS集成"->"iOS应用配置"->"广告平台对接"
+ * ***详细文档请查看：***
+ */
++ (void)initWithDelegate:(nullable id<OpenInstallDelegate>)delegate advertisingId:(NSString *_Nullable)adid;
 
 
 #pragma mark - Deprecated in v2.2.0（已废弃）
@@ -184,7 +195,6 @@
  * @param effectValue 效果点值（如果是人民币金额，请以分为计量单位）
  */
 -(void)reportEffectPoint:(NSString *_Nonnull)effectID effectValue:(long)effectValue;
-
 
 @end
 
