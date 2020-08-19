@@ -2,6 +2,8 @@
 
 uni-app集成openinstall请前往DCloud插件市场 https://ext.dcloud.net.cn/plugin?id=692 
 
+针对使用了 渠道统计 功能中的 广告渠道 效果监测功能的集成，需要参考 [补充文档](#ad)
+
 ## Android 集成指南
 
 集成 openinstall SDK 到 Hbuilder Android 项目中，请参考 [Android 集成指南](README/Android.md)
@@ -71,6 +73,33 @@ function reportEffectPoint(){
 - 代码集成完毕后，需要导出安装包上传openinstall后台，openinstall会自动完成所有的应用配置工作。  
 - 上传完成后即可开始在线模拟测试，体验完整的App安装/拉起流程；待测试无误后，再完善下载配置信息。  
 
-下面是apk包的上传界面（后台截图）：  
+---
+<a id=ad></a>
+## 广告接入补充文档
 
-![上传安装包](res/guide2.jpg)
+### Android 平台
+（1）在 `AndroidManifest.xml` 中添加权限声明 `<uses-permission android:name="android.permission.READ_PHONE_STATE"/>`  
+
+（2）调用 `registerWakeUpHandler` 时，第二个参数传入`true`表示需要申请权限
+``` js
+// 需要申请权限
+plus.openinstall.registerWakeUpHandler(wakeup, true);
+
+```
+
+### iOS 平台
+
+（1）方式一，将 `iOS/OpenInstallApiManager.m` 文件替换为 `ad-track/OpenInstallApiManager.m ` 文件
+
+（2）方式二，修改 `iOS/OpenInstallApiManager.m ` 文件代码，添加系统广告头文件和openinstall初始化代码：
+``` objc
+#import <AdSupport/AdSupport.h>//使用idfa时引入（可选）
+```
+
+找到 `onAppStarted` 初始化方法，使用新API接口替换掉原先的初始化方法 `[OpenInstallSDK initWithDelegate:self];` ，替换后方法如下：
+``` objc
+-(void)onAppStarted:(NSDictionary*)options{    
+    NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];
+}
+```
