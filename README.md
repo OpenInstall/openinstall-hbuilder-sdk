@@ -103,3 +103,5 @@ plus.openinstall.registerWakeUpHandler(wakeup, true);
     [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];
 }
 ```
+
+备注：2021年初苹果公司将正式启用idfa隐私政策，届时需要对插件进行更新，详情可参考：[广告平台对接iOS集成指引](https://www.openinstall.io/doc/ad_ios.html)

@@ -9,9 +9,9 @@
 #import "OpenInstallApiManager.h"
 
 #import <AdSupport/AdSupport.h>//需要使用idfa时引入
-#if defined(__IPHONE_14_0)
-#import <AppTrackingTransparency/AppTrackingTransparency.h>//适配iOS14
-#endif
+//#if defined(__IPHONE_14_0)
+//#import <AppTrackingTransparency/AppTrackingTransparency.h>//适配iOS14
+//#endif
 
 @implementation OpenInstallApiManager
 
@@ -22,6 +22,7 @@
  * 需要在PandoraApi.bundle/feature.plist/注册插件里添加autostart值为true，global项的值设置为true
  */
 -(void)onAppStarted:(NSDictionary*)options{
+/*
 #if defined(__IPHONE_14_0)
     if (@available(iOS 14, *)) {
         [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
@@ -33,6 +34,9 @@
     NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
     [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];
 #endif
+*/
+    NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];
 }
 
 -(void)registerWakeUpHandler:(PGMethod*)command{
