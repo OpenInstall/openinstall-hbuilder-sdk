@@ -4,6 +4,8 @@ uni-app集成openinstall请前往DCloud插件市场 https://ext.dcloud.net.cn/pl
 
 针对使用了 渠道统计 功能中的 广告渠道 效果监测功能的集成，需要参考 [补充文档](#ad)
 
+集成有任何问题，请 [联系我们](https://www.openinstall.io/)
+
 ## Android 集成指南
 
 集成 openinstall SDK 到 Hbuilder Android 项目中，请参考 [Android 集成指南](README/Android.md)
@@ -35,7 +37,7 @@ document.addEventListener('plusready',function(){
                 alert("wakeup : channelCode= " + data.channelCode + ", bindData=" + data.bindData);
             });
 
-},false);
+});
 ```
 
 #### 3 携带参数安装（高级版功能）

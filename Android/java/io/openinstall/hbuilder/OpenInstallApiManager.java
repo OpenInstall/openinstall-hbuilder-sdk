@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.fm.openinstall.Configuration;
 import com.fm.openinstall.OpenInstall;
 import com.fm.openinstall.listener.AppInstallAdapter;
 import com.fm.openinstall.listener.AppWakeUpAdapter;
@@ -29,7 +30,9 @@ public class OpenInstallApiManager extends StandardFeature {
     private IWebview webview = null;
     private String wakeupCallBackID = null;
     private Intent wakeupIntent = null;
+    private volatile boolean callInit = false;
     private volatile boolean initialized = false;
+    private Configuration configuration = null;
 
     @Override
     public void onStart(Context context, Bundle bundle, String[] strings) {
@@ -38,13 +41,40 @@ public class OpenInstallApiManager extends StandardFeature {
 //        OpenInstall.init(context);
     }
 
-    private void init(IWebview pWebview, boolean permission) {
+    public void init(IWebview pWebview, JSONArray array) {
+        boolean permission = array.optBoolean(0, false);
+        init(pWebview, permission);
+    }
+
+    private void init(IWebview pWebview, boolean permission){
         Log.d(TAG, "init, need permission is " + permission);
+        callInit = true;
         if (permission) {
             initWithPermission(pWebview);
         } else {
             initialized(pWebview);
         }
+    }
+
+    public void config(IWebview pWebview, JSONArray array){
+        boolean adEnabled = array.optBoolean(0, false);
+        String oaid = array.optString(1, null);
+        oaid = setNull(oaid);
+        String gaid = array.optString(2, null);
+        gaid = setNull(gaid);
+        Log.d(TAG, String.format("adEnabled=%s, oaid=%s, gaid=%s",
+                adEnabled,oaid==null?"未传入":oaid,gaid==null?"未传入":gaid));
+        Configuration.Builder builder = new Configuration.Builder();
+        configuration = builder.adEnabled(adEnabled).oaid(oaid).gaid(gaid).build();
+    }
+
+    private String setNull(String res){
+        // 传入 null 或者 未定义，设置为 null
+        if(res == null || res.equalsIgnoreCase("null")
+            || res.equalsIgnoreCase("undefined")){
+            return null;
+        }
+        return res;
     }
 
     private void initWithPermission(final IWebview pWebview) {
@@ -69,12 +99,11 @@ public class OpenInstallApiManager extends StandardFeature {
         } else {
             initialized(pWebview);
         }
-
     }
 
 
     private void initialized(final IWebview pWebview) {
-        OpenInstall.init(pWebview.getContext());
+        OpenInstall.init(pWebview.getContext(), configuration);
         initialized = true;
         if (wakeupIntent != null) {
             OpenInstall.getWakeUp(wakeupIntent, new AppWakeUpAdapter() {
@@ -95,13 +124,10 @@ public class OpenInstallApiManager extends StandardFeature {
     }
 
     public void registerWakeUpHandler(final IWebview pWebview, JSONArray array) {
-
-        boolean permission = false;
-        if (!array.isNull(1)) {
-            permission = array.optBoolean(1);
+        if (!callInit) {
+            boolean permission = array.optBoolean(1, false);
+            init(pWebview, permission);
         }
-        init(pWebview, permission);
-
         Log.d(TAG, "registerWakeUpHandler");
         String callBackID = array.optString(0);
 

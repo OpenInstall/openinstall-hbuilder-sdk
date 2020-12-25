@@ -2,6 +2,12 @@ document.addEventListener( "plusready",  function(){
     var _BARCODE = 'openinstall',
 		B = window.plus.bridge;
     var openinstall = {
+
+        // 初始化前配置
+        config : function (adEnabled, oaid, gaid) {
+            return B.exec(_BARCODE, "config", [adEnabled, oaid, gaid]);
+        },
+
         // 初始化
         init : function (permission) {
             return B.exec(_BARCODE, "init", [permission]);
