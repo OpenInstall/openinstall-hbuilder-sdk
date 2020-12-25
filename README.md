@@ -82,12 +82,7 @@ function reportEffectPoint(){
 ### Android 平台
 （1）在 `AndroidManifest.xml` 中添加权限声明 `<uses-permission android:name="android.permission.READ_PHONE_STATE"/>`  
 
-（2）调用 `registerWakeUpHandler` 时，第二个参数传入`true`表示需要申请权限
-``` js
-// 需要申请权限
-plus.openinstall.registerWakeUpHandler(wakeup, true);
-
-```
+（2）其它接口调用请参考 [Android 集成指南 -> 其它](README/Android.md#ad)
 
 ### iOS 平台
 
