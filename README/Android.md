@@ -98,7 +98,9 @@
     </activity>
 </application>
 ```
+
 #### 其它
+
 ##### 隐私政策规范
 新增 `init` 接口，插件内部已经不再自动初始化，需要确保用户同意《隐私政策》之后，再初始化 openinstall。参考 [应用合规指南](https://www.openinstall.io/doc/rules.html) 
 ``` js
@@ -106,11 +108,12 @@
     * 调用初始化，允许 openinstall 请求权限
     * permission 为 true，表示允许 openinstall 申请权限，以便获取 imei
     */
-    plus.openinstall.init(true);
+    plus.openinstall.init(false);
 ```
 初始化之后再调用其它接口，下面的`config` 接口除外
+
 ##### 广告平台
-针对广告平台接入，新增配置接口，在调用 `init` 之前调用。参考 [广告平台对接Android集成指引](https://www.openinstall.io/doc/ad_android.html)
+1、针对广告平台接入，新增配置接口，在调用 `init` 之前调用。参考 [广告平台对接Android集成指引](https://www.openinstall.io/doc/ad_android.html)
 ``` js
     /**
     * adEnabled 为 true 表示 openinstall 需要获取广告追踪相关参数，默认为 false
@@ -124,4 +127,14 @@
     // f32a09dc-3312-d43e-6583-62fac13f33ae 是通过移动安全联盟获取到的 oaid
     plus.openinstall.config(true, "f32a09dc-3312-d43e-6583-62fac13f33ae", null);
 ```
-
+    
+2、为了精准地匹配到渠道，需要获取设备唯一标识码（IMEI），因此需要做额外的权限申请  
+在 `AndroidManifest.xml` 中添加权限声明 `<uses-permission android:name="android.permission.READ_PHONE_STATE"/>`  
+3、允许插件申请权限并初始化
+``` js
+    /**
+    * 调用初始化，允许 openinstall 请求权限
+    * permission 为 true，表示允许 openinstall 申请权限，以便获取 imei
+    */
+    plus.openinstall.init(true);
+```

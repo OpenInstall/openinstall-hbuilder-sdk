@@ -80,9 +80,8 @@ function reportEffectPoint(){
 ## 广告接入补充文档
 
 ### Android 平台
-（1）在 `AndroidManifest.xml` 中添加权限声明 `<uses-permission android:name="android.permission.READ_PHONE_STATE"/>`  
-
-（2）其它接口调用请参考 [Android 集成指南 -> 其它](README/Android.md#ad)
+ 
+请参考 [Android 集成指南 -> 广告平台](README/Android.md#广告平台)
 
 ### iOS 平台
 
