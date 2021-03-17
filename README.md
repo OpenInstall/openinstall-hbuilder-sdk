@@ -85,19 +85,12 @@ function reportEffectPoint(){
 
 ### iOS 平台
 
-（1）方式一，将 `iOS/OpenInstallApiManager.m` 文件替换为 `ad-track/OpenInstallApiManager.m ` 文件
+1、将 `iOS/OpenInstallApiManager.m` 文件替换为 `ad-track/OpenInstallApiManager.m ` 文件  
 
-（2）方式二，修改 `iOS/OpenInstallApiManager.m ` 文件代码，添加系统广告头文件和openinstall初始化代码：
-``` objc
-#import <AdSupport/AdSupport.h>//使用idfa时引入（可选）
+2、需要在Info.plist文件中配置权限  
+``` xml
+<key>NSUserTrackingUsageDescription</key>
+<string>请允许，以获取和使用您的IDFA</string>
 ```
 
-找到 `onAppStarted` 初始化方法，使用新API接口替换掉原先的初始化方法 `[OpenInstallSDK initWithDelegate:self];` ，替换后方法如下：
-``` objc
--(void)onAppStarted:(NSDictionary*)options{    
-    NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-    [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];
-}
-```
-
-备注：2021年初苹果公司将正式启用idfa隐私政策，届时需要对插件进行更新，详情可参考：[广告平台对接iOS集成指引](https://www.openinstall.io/doc/ad_ios.html)
+备注：2021年，iOS14.5苹果公司将正式启用idfa新隐私政策，详情可参考：[广告平台对接iOS集成指引](https://www.openinstall.io/doc/ad_ios.html)
