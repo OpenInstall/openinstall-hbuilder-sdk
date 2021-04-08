@@ -20,7 +20,7 @@
  * @param error 错误回调
  * @discussion 老版本sdk升级过来可延用该api
  */
-- (void)getInstallParamsFromOpenInstall:(nullable NSDictionary *)params withError:(nullable NSError *)error;
+- (void)getInstallParamsFromOpenInstall:(nullable NSDictionary *)params withError:(nullable NSError *)error __deprecated_msg("Deprecated func，请使用方法<code>getInstallParmsCompleted</code>");
 
 
 ///----------------------
@@ -34,7 +34,7 @@
  * @param error 错误回调
  * @discussion 老版本sdk升级过来可延用该api
  */
-- (void)getWakeUpParamsFromOpenInstall:(nullable NSDictionary *)params withError:(nullable NSError *)error;
+- (void)getWakeUpParamsFromOpenInstall:(nullable NSDictionary *)params withError:(nullable NSError *)error __deprecated_msg("Deprecated func，请使用方法<code>getWakeUpParams</code>");
 
 
 #pragma mark - add in v2.2.0
