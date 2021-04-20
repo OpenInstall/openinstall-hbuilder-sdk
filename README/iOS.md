@@ -5,9 +5,9 @@
 
 #### 拷贝相关文件
 
-拷贝Openinstall官方SDK(libOpenInstallSDK.a,OpeninstallSDK.h,OpeninstallData.h)和插件类(OpenInstallApiManager.h,OpenInstallApiManager.m)到项目工程主目录下  
+拷贝Openinstall官方SDK(libOpenInstallSDK.a,OpeninstallSDK.h,OpeninstallData.h)和插件类(OpenInstallApiManager.h,OpenInstallApiManager.m,OpenInstallStorage.h,OpenInstallStorage.m)到项目工程主目录下  
 
-**注意：iOS环境下不要过早的调用openinstall.js下的方法(plus.openinstall.xxxxx)，如在首页窗口未加载完就调用的话，有用户出现过TypeError:undefined is not an object的错误，请掌握好调用时机**
+注意：老版本5+SDK环境下，在iOS中过早的调用openinstall.js下的方法(plus.openinstall.xxxxx)，例如在首页窗口未加载完就调用的话，有用户出现过TypeError:undefined is not an object的错误，具体情况以实际测试为准  
 
 #### 关联 JS 插件名和 iOS 原生类
 修改 `PandoraAPI.bundle` 中 `feature.plist` 文件，在其中添加JS插件别名和Native插件类的对应关系，SDK基座会根据对应关系查找并生成相应的Native对象并执行对应的方法。
@@ -75,16 +75,25 @@
 在AppDelegate中引入头文件，并添加通用链接(Universal Link)回调方法，委托openinstall插件来处理
 
 ``` objc
-    #import "OpenInstallApiManager.h"
+    #import "OpenInstallStorage.h"
+    
+    - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions{
+
+        //app在杀死的情况下，一键跳转的参数处理方法
+        NSDictionary *optionsDic = [launchOptions valueForKey:UIApplicationLaunchOptionsUserActivityDictionaryKey];
+        [optionsDic enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+            if ([key isEqualToString:@"UIApplicationLaunchOptionsUserActivityKey"]) {
+                [[OpenInstallStorage share] universalLinkHandler:(NSUserActivity *)obj];
+                *stop = YES;
+            }
+        }];
+    }
 
     -(BOOL)application:(UIApplication *)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler{
-    
-      //判断是否通过OpenInstall Universal Link 唤起App
-      [OpenInstallApiManager universalLinkHandler:userActivity.webpageURL];
-    
+      //app在启动并退到后台时，一键跳转的参数处理方法
+      [[OpenInstallStorage share] universalLinkHandler:userActivity];
       //其他第三方回调；
       return YES;
-
     }
 
 ```
@@ -127,18 +136,25 @@
 在 `AppDelegate` 中引入头文件，并添加 `scheme` 的回调方法，委托 openinstall 插件来处理
 
 ``` objc
+//适用目前所有iOS版本
 - (BOOL)application:(UIApplication *)application
             openURL:(NSURL *)url
   sourceApplication:(NSString *)sourceApplication
          annotation:(id)annotation {
     
-    //判断是否通过OpenInstall scheme 唤起App
-    [OpenInstallApiManager schemeUrlHandler:url];
+    [[OpenInstallStorage share] schemeUrlHandler:url];
 
     [self application:application handleOpenURL:url];
     return YES;
 }
 
+//iOS9以上，会优先走这个方法
+- (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(nonnull NSDictionary *)options{
+    
+    [[OpenInstallStorage share] schemeUrlHandler:url];
+    //其他第三方回调；
+     return YES;
+}
 ```
 
 

@@ -7,13 +7,14 @@
 //
 
 #import "OpenInstallApiManager.h"
-
-#import <AdSupport/AdSupport.h>//需要使用idfa时引入
+#import <AdSupport/AdSupport.h>
 #if defined(__IPHONE_14_0)
 #import <AppTrackingTransparency/AppTrackingTransparency.h>//适配iOS14
 #endif
 
 @implementation OpenInstallApiManager
+
+
 
 #pragma mark 这个方法在使用WebApp方式集成时触发，WebView集成方式不触发
 
@@ -21,32 +22,54 @@
  * WebApp启动时触发
  * 需要在PandoraApi.bundle/feature.plist/注册插件里添加autostart值为true，global项的值设置为true
  */
--(void)onAppStarted:(NSDictionary*)options{
-
-#if defined(__IPHONE_14_0)
-    if (@available(iOS 14, *)) {
-        [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+- (void) onAppStarted:(NSDictionary*)options{
+    NSLog(@"5+ WebApp启动时触发");
+    // 可以在这个方法里向Core注册扩展插件的JS
+    
+    #if defined(__IPHONE_14_0)
+        if (@available(iOS 14, *)) {
+            [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+                NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+                [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];//不管用户是否授权，都要初始化
+                [OpenInstallStorage share].isInit = YES;
+            }];
+        }else{
             NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-            [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];//不管用户是否授权，都要初始化
-        }];
-    }
-#else
-    NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-    [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];
-#endif
-
+            [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];
+            [OpenInstallStorage share].isInit = YES;
+        }
+    #else
+        NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+        [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];
+        [OpenInstallStorage share].isInit = YES;
+    #endif
+    
 }
 
 -(void)registerWakeUpHandler:(PGMethod*)command{
     
     NSString* cbId = [command.arguments objectAtIndex:0];
-    self.wakeupId = cbId;
-    if (self.wakeupDic) {
-        PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:self.wakeupDic];
+    OpenInstallStorage *storage = [OpenInstallStorage share];
+    storage.wakeupId = cbId;
+    if (storage.wakeupDic.count != 0) {
+        PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:storage.wakeupDic];
         result.keepCallback = YES;
-        [self toCallback:self.wakeupId withReslut:[result toJSONString]];
-        self.wakeupDic = nil;
+        [self toCallback:storage.wakeupId withReslut:[result toJSONString]];
+        storage.wakeupDic = nil;
+    }else{
+
+        [OpenInstallSDK initWithDelegate:self];
+        
+        if (storage.userActivity) {
+            [OpenInstallSDK continueUserActivity:storage.userActivity];
+            storage.userActivity = nil;
+        }
+        if (storage.urlScheme) {
+            [OpenInstallSDK handLinkURL:storage.urlScheme];
+            storage.urlScheme = nil;
+        }
     }
+
 }
 -(void)getInstall:(PGMethod*)command{
     
@@ -91,29 +114,6 @@
     [[OpenInstallSDK defaultManager] reportEffectPoint:pointId effectValue:pointValue];
 }
 
-
-+(void)universalLinkHandler:(NSURL *)url{
-    
-    [OpenInstallSDK defaultManager];
-    if (url) {
-        if ([url isKindOfClass:[NSURL class]]) {
-            NSUserActivity *activity = [[NSUserActivity alloc]initWithActivityType:NSUserActivityTypeBrowsingWeb];
-            activity.webpageURL = url;
-            [OpenInstallSDK continueUserActivity:activity];
-        }
-    }
-    
-}
-+(void)schemeUrlHandler:(NSURL *)url{
-    
-    [OpenInstallSDK defaultManager];
-    if (url) {
-        if ([url isKindOfClass:[NSURL class]]) {
-            [OpenInstallSDK handLinkURL:url];
-        }
-    }
-    
-}
 -(void)getWakeUpParams:(OpeninstallData *)appData{
     NSLog(@"OpenInstall拉起参数返回值:bindData:%@,channelCode:%@",appData.data,appData.channelCode);
     NSString *channelID = @"";
@@ -125,15 +125,17 @@
         channelID = appData.channelCode;
     }
     NSDictionary *wakeUpDicResult = @{@"channelCode":channelID,@"bindData":datas};
-
+    
     PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:wakeUpDicResult];
     result.keepCallback = YES;
-    if (self.wakeupId) {
-        [self toCallback:self.wakeupId withReslut:[result toJSONString]];
+    OpenInstallStorage *storage = [OpenInstallStorage share];
+    if (storage.wakeupId) {
+        [self toCallback:storage.wakeupId withReslut:[result toJSONString]];
     }else{
-        self.wakeupDic = wakeUpDicResult;
+        storage.wakeupDic = wakeUpDicResult;
     }
 }
+
 
 - (NSString *)jsonStringWithObject:(id)jsonObject{
     

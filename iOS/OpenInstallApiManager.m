@@ -8,7 +8,10 @@
 
 #import "OpenInstallApiManager.h"
 
+
 @implementation OpenInstallApiManager
+
+
 
 #pragma mark 这个方法在使用WebApp方式集成时触发，WebView集成方式不触发
 
@@ -19,21 +22,35 @@
 - (void) onAppStarted:(NSDictionary*)options{
     NSLog(@"5+ WebApp启动时触发");
     // 可以在这个方法里向Core注册扩展插件的JS
-    
+        
     [OpenInstallSDK initWithDelegate:self];
-    
+    [OpenInstallStorage share].isInit = YES;
 }
 
 -(void)registerWakeUpHandler:(PGMethod*)command{
     
     NSString* cbId = [command.arguments objectAtIndex:0];
-    self.wakeupId = cbId;
-    if (self.wakeupDic) {
-        PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:self.wakeupDic];
+    OpenInstallStorage *storage = [OpenInstallStorage share];
+    storage.wakeupId = cbId;
+    if (storage.wakeupDic.count != 0) {
+        PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:storage.wakeupDic];
         result.keepCallback = YES;
-        [self toCallback:self.wakeupId withReslut:[result toJSONString]];
-        self.wakeupDic = nil;
+        [self toCallback:storage.wakeupId withReslut:[result toJSONString]];
+        storage.wakeupDic = nil;
+    }else{
+
+        [OpenInstallSDK initWithDelegate:self];
+        
+        if (storage.userActivity) {
+            [OpenInstallSDK continueUserActivity:storage.userActivity];
+            storage.userActivity = nil;
+        }
+        if (storage.urlScheme) {
+            [OpenInstallSDK handLinkURL:storage.urlScheme];
+            storage.urlScheme = nil;
+        }
     }
+
 }
 -(void)getInstall:(PGMethod*)command{
     
@@ -78,29 +95,6 @@
     [[OpenInstallSDK defaultManager] reportEffectPoint:pointId effectValue:pointValue];
 }
 
-
-+(void)universalLinkHandler:(NSURL *)url{
-    
-    [OpenInstallSDK defaultManager];
-    if (url) {
-        if ([url isKindOfClass:[NSURL class]]) {
-            NSUserActivity *activity = [[NSUserActivity alloc]initWithActivityType:NSUserActivityTypeBrowsingWeb];
-            activity.webpageURL = url;
-            [OpenInstallSDK continueUserActivity:activity];
-        }
-    }
-    
-}
-+(void)schemeUrlHandler:(NSURL *)url{
-    
-    [OpenInstallSDK defaultManager];
-    if (url) {
-        if ([url isKindOfClass:[NSURL class]]) {
-            [OpenInstallSDK handLinkURL:url];
-        }
-    }
-    
-}
 -(void)getWakeUpParams:(OpeninstallData *)appData{
     NSLog(@"OpenInstall拉起参数返回值:bindData:%@,channelCode:%@",appData.data,appData.channelCode);
     NSString *channelID = @"";
@@ -112,15 +106,17 @@
         channelID = appData.channelCode;
     }
     NSDictionary *wakeUpDicResult = @{@"channelCode":channelID,@"bindData":datas};
-
+    
     PDRPluginResult *result = [PDRPluginResult resultWithStatus:PDRCommandStatusOK messageAsDictionary:wakeUpDicResult];
     result.keepCallback = YES;
-    if (self.wakeupId) {
-        [self toCallback:self.wakeupId withReslut:[result toJSONString]];
+    OpenInstallStorage *storage = [OpenInstallStorage share];
+    if (storage.wakeupId) {
+        [self toCallback:storage.wakeupId withReslut:[result toJSONString]];
     }else{
-        self.wakeupDic = wakeUpDicResult;
+        storage.wakeupDic = wakeUpDicResult;
     }
 }
+
 
 - (NSString *)jsonStringWithObject:(id)jsonObject{
     
