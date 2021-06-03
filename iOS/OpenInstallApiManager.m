@@ -126,7 +126,7 @@
     
     NSString* argumentsJSON = [self cp_JSONString:argumentsWrappedInArr];
     
-    argumentsJSON = [argumentsJSON substringWithRange:NSMakeRange(1, [argumentsJSON length] - 2)];
+    if (argumentsJSON.length>2) {argumentsJSON = [argumentsJSON substringWithRange:NSMakeRange(1, [argumentsJSON length] - 2)];}
     
     return argumentsJSON;
 }
