@@ -41,12 +41,41 @@ public class OpenInstallApiManager extends StandardFeature {
 //        OpenInstall.init(context);
     }
 
+    public void config(IWebview pWebview, JSONArray array) {
+        JSONObject options = array.optJSONObject(0);
+        if (options != null) {
+            boolean adEnabled = options.optBoolean("adEnabled", false);
+            String oaid = options.optString("oaid", null);
+            oaid = setNull(oaid);
+            String gaid = options.optString("gaid", null);
+            gaid = setNull(gaid);
+
+            boolean macDisabled = options.optBoolean("macDisabled", false);
+            boolean imeiDisabled = options.optBoolean("imeiDisabled", false);
+
+            Log.d(TAG, String.format("adEnabled=%s, oaid=%s, gaid=%s, macDisabled=%s, imeiDisabled= %s",
+                    adEnabled, oaid == null ? "未传入" : oaid, gaid == null ? "未传入" : gaid,
+                    macDisabled, imeiDisabled));
+
+            Configuration.Builder builder = new Configuration.Builder();
+            if (macDisabled) {
+                builder.macDisabled();
+            }
+            if (imeiDisabled) {
+                builder.imeiDisabled();
+            }
+            configuration = builder.adEnabled(adEnabled).oaid(oaid).gaid(gaid).build();
+        } else {
+            Log.d(TAG, "options is null");
+        }
+    }
+
     public void init(IWebview pWebview, JSONArray array) {
         boolean permission = array.optBoolean(0, false);
         init(pWebview, permission);
     }
 
-    private void init(IWebview pWebview, boolean permission){
+    private void init(IWebview pWebview, boolean permission) {
         Log.d(TAG, "init, need permission is " + permission);
         callInit = true;
         if (permission) {
@@ -56,22 +85,10 @@ public class OpenInstallApiManager extends StandardFeature {
         }
     }
 
-    public void config(IWebview pWebview, JSONArray array){
-        boolean adEnabled = array.optBoolean(0, false);
-        String oaid = array.optString(1, null);
-        oaid = setNull(oaid);
-        String gaid = array.optString(2, null);
-        gaid = setNull(gaid);
-        Log.d(TAG, String.format("adEnabled=%s, oaid=%s, gaid=%s",
-                adEnabled,oaid==null?"未传入":oaid,gaid==null?"未传入":gaid));
-        Configuration.Builder builder = new Configuration.Builder();
-        configuration = builder.adEnabled(adEnabled).oaid(oaid).gaid(gaid).build();
-    }
-
-    private String setNull(String res){
+    private String setNull(String res) {
         // 传入 null 或者 未定义，设置为 null
-        if(res == null || res.equalsIgnoreCase("null")
-            || res.equalsIgnoreCase("undefined")){
+        if (res == null || res.equalsIgnoreCase("null")
+                || res.equalsIgnoreCase("undefined")) {
             return null;
         }
         return res;

@@ -32,10 +32,8 @@ uni-app集成openinstall请前往DCloud插件市场 https://ext.dcloud.net.cn/pl
 ``` js
 document.addEventListener('plusready',function(){
     plus.openinstall.registerWakeUpHandler(function(data){
-                console.log("wakeup : channelCode= "
-                    + data.channelCode + ", bindData=" + data.bindData);
-                alert("wakeup : channelCode= " + data.channelCode + ", bindData=" + data.bindData);
-            });
+            console.log("wakeup : channelCode= " + data.channelCode + ", bindData=" + data.bindData);
+        });
 
 });
 ```
@@ -46,8 +44,7 @@ document.addEventListener('plusready',function(){
 ``` js
 function getInstall(){
     plus.openinstall.getInstall(function(data){
-        console.log("getInstall : channelCode= "
-                + data.channelCode + ", bindData=" + data.bindData);
+        console.log("getInstall : channelCode= " + data.channelCode + ", bindData=" + data.bindData);
     }, 8);
 }
 ```
