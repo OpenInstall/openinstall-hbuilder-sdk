@@ -39,6 +39,7 @@
       "description": "应用扩展事件"
     },
     
+    
     "openinstall": {
       "description": "openinstall插件"
     }
@@ -56,8 +57,8 @@
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
 ##### 配置 AppKey 和 scheme 
-从 [openinstall官网](https://www.openinstall.io/) 获取应用的 `AppKey` 和 `scheme`。将下面文档中的 `OPENINSTALL_APPKEY` 和 `OPENINSTALL_SCHEME` 替换。  
-（scheme的值详细获取位置：openinstall应用控制台->iOS集成->iOS应用配置）  
+从 [openinstall官网](https://www.openinstall.io/) 进入用户控制台获取应用的 `AppKey` 和 `scheme`。将下面文档中的 `OPENINSTALL_APPKEY` 和 `OPENINSTALL_SCHEME` 替换。  
+（进入openinstall控制台，选择您的应用，进入“应用集成”中的“Android集成”菜单，切换到“Android应用配置”选项卡即可看到appkey和scheme）  
 
 ``` xml
 <application
@@ -113,7 +114,7 @@
     var options = {
         adEnabled: true, 
     }
-    plus.openinstall.config(options);
+    plus.openinstall.configAndroid(options);
 ```
 options 可选参数如下：
 - adEnabled: true  

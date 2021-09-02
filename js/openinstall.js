@@ -12,17 +12,16 @@ document.addEventListener( "plusready",  function(){
            oaid: "通过移动安全联盟获取到的 oaid", //SDK 使用传入的oaid，不再获取oaid
        }
        */
-        config : function (options, oaid, gaid) {
-            // 兼容旧版本接口，后续移除
-            // config : function (adEnabled, oaid, gaid){}
-            if(options.constructor == Boolean){
-                var param = {};
-                param.adEnabled = options;
-                param.oaid = oaid;
-                param.gaid = gaid;
-                return B.exec(_BARCODE, "config", [param]);
-            }
+        configAndroid : function (options) {
+            return B.exec(_BARCODE, "config", [options]);
+        },
 
+        // 旧版本接口，后续移除
+        config : function (adEnabled, oaid, gaid) {
+            var options = {};
+            options.adEnabled = adEnabled;
+            options.oaid = oaid;
+            options.gaid = gaid;
             return B.exec(_BARCODE, "config", [options]);
         },
 
