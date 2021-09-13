@@ -6,7 +6,12 @@
 #### 拷贝相关文件
 - 将 `Android/libs` 文件夹下的 openinstall SDK 拷贝到项目的 `app/libs` 文件夹下 
 - 将 `Android/java` 目录下的文件夹拷贝到项目的 `app/src/main/java` 目录下
-- 将 `js` 目录下的 `openinstall.js` 拷贝到项目工程 `app/src/main/assets/` 目录中的 `www` 资源的 js 文件目录下
+- 将 `js` 目录下的 `openinstall.js` 拷贝到项目工程 `app/src/main/assets/` 目录中的 `www` 资源的 js 文件目录下  
+
+> **注意：** 请开发者在进行升级时，重新拷贝并覆盖旧的文件，删除低版本SDK
+
+拷贝完所有文件后，最终的项目结构如下图 
+![项目结构](./res/android-files.jpg)
 
 #### 关联 JS 插件名和 Android 原生类
 修改项目的 `app/src/main/assets/data/` 目录下的 `dcloud_properties.xml`文件，指定 JS 对象名称和 Android 的类名对应关系，以便 H5+ SDK 根据对应的 JS 名查找并生成相应的 Native 对象执行对应的逻辑
@@ -20,7 +25,9 @@
     </features>
 </properties>
 ```
-在应用的 manifest.json 文件中还需要添加扩展插件的应用使用权限
+![关联js](./res/android-properties.jpg)
+#### 添加插件使用权限
+修改 `app/src/main/assets/`目录中的 `www` 目录下的 `manifest.json`文件，添加扩展插件openinstall的应用使用权限
 ``` json
 {
   "@platforms": [
@@ -47,19 +54,20 @@
   
 }
 ```
+![使用权限](./res/android-manifest.jpg)
 
-#### openinstall 的配置
-根据openinstall官方文档，在 `AndroidManifest.xml` 中做以下配置
-
-##### 声明权限
+#### 声明权限
+在 `AndroidManifest.xml` 中添加基本的权限声明
 ``` xml
 <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 <uses-permission android:name="android.permission.INTERNET"/>
 ```
-##### 配置 AppKey 和 scheme 
-从 [openinstall官网](https://www.openinstall.io/) 进入用户控制台获取应用的 `AppKey` 和 `scheme`。将下面文档中的 `OPENINSTALL_APPKEY` 和 `OPENINSTALL_SCHEME` 替换。  
-（进入openinstall控制台，选择您的应用，进入“应用集成”中的“Android集成”菜单，切换到“Android应用配置”选项卡即可看到appkey和scheme）  
+#### 配置 AppKey 和 scheme 
+前往 [openinstall控制台](https://www.openinstall.io/) ，进入应用，选择
+“Android集成”，切换到“Android应用配置”，获取应用的 `AppKey` 和 `scheme`。
+![获取appkey](./res/android-info.jpg)
 
+在 `AndroidManifest.xml` 中配置 AppKey 和 scheme，示例如下：   
 ``` xml
 <application
     android:allowBackup="false"
@@ -98,42 +106,6 @@
     </activity>
 </application>
 ```
+> 注意：使用获取的`AppKey` 和 `scheme`替换示例代码中的 `OPENINSTALL_APPKEY` 和 `OPENINSTALL_SCHEME` 。
 
-#### 其它
 
-##### 隐私政策规范
-新增 `init` 接口，插件内部已经不再自动初始化，需要确保用户同意《隐私政策》之后，再初始化 openinstall。参考 [应用合规指南](https://www.openinstall.io/doc/rules.html) 
-``` js
-    plus.openinstall.init();
-```
-初始化之后再调用其它接口，针对广告平台接入的`config` 接口除外
-
-##### 广告平台
-1、针对广告平台接入，新增配置接口，在调用 `init` 之前调用。参考 [广告平台对接Android集成指引](https://www.openinstall.io/doc/ad_android.html)
-``` js
-    var options = {
-        adEnabled: true, 
-    }
-    plus.openinstall.configAndroid(options);
-```
-options 可选参数如下：
-- adEnabled: true  
-SDK 需要获取广告追踪相关参数
-- macDisabled: true  
-SDK 不需要获取 mac地址
-- imeiDisabled: true  
-SDK 不需要获取 imei
-- gaid: "通过 google api 获取到的 advertisingId"  
-SDK 使用传入的gaid，不再获取gaid
-- oaid: "通过移动安全联盟获取到的 oaid"  
-SDK 使用传入的oaid，不再获取oaid
-    
-2、为了精准地匹配到渠道，需要获取设备唯一标识码（IMEI），因此需要做额外的权限申请  
-在 `AndroidManifest.xml` 中添加权限声明 `<uses-permission android:name="android.permission.READ_PHONE_STATE"/>`  
-3、允许插件申请权限并初始化
-``` js
-    /**
-    * 调用初始化，允许 openinstall 请求权限
-    */
-    plus.openinstall.init(true);
-```

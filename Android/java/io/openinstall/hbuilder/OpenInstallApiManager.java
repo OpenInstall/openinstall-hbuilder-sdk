@@ -1,6 +1,5 @@
 package io.openinstall.hbuilder;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,7 +20,6 @@ import org.json.JSONObject;
 import io.dcloud.common.DHInterface.ISysEventListener;
 import io.dcloud.common.DHInterface.IWebview;
 import io.dcloud.common.DHInterface.StandardFeature;
-import io.dcloud.common.adapter.util.PermissionUtil;
 import io.dcloud.common.util.JSUtil;
 
 public class OpenInstallApiManager extends StandardFeature {
@@ -30,59 +28,45 @@ public class OpenInstallApiManager extends StandardFeature {
     private IWebview webview = null;
     private String wakeupCallBackID = null;
     private Intent wakeupIntent = null;
-    private volatile boolean callInit = false;
     private volatile boolean initialized = false;
     private Configuration configuration = null;
 
     @Override
     public void onStart(Context context, Bundle bundle, String[] strings) {
         super.onStart(context, bundle, strings);
-//        Log.d(TAG, "init");
-//        OpenInstall.init(context);
     }
 
     public void config(IWebview pWebview, JSONArray array) {
         JSONObject options = array.optJSONObject(0);
         if (options != null) {
-            boolean adEnabled = options.optBoolean("adEnabled", false);
-            String oaid = options.optString("oaid", null);
-            oaid = setNull(oaid);
-            String gaid = options.optString("gaid", null);
-            gaid = setNull(gaid);
-
-            boolean macDisabled = options.optBoolean("macDisabled", false);
-            boolean imeiDisabled = options.optBoolean("imeiDisabled", false);
-
-            Log.d(TAG, String.format("adEnabled=%s, oaid=%s, gaid=%s, macDisabled=%s, imeiDisabled= %s",
-                    adEnabled, oaid == null ? "未传入" : oaid, gaid == null ? "未传入" : gaid,
-                    macDisabled, imeiDisabled));
-
             Configuration.Builder builder = new Configuration.Builder();
+            boolean adEnabled = options.optBoolean("adEnabled", false);
+            builder.adEnabled(adEnabled);
+            String oaid = options.optString("oaid", null);
+            builder.oaid(setNull(oaid));
+            String gaid = options.optString("gaid", null);
+            builder.gaid(setNull(gaid));
+            boolean macDisabled = options.optBoolean("macDisabled", false);
             if (macDisabled) {
                 builder.macDisabled();
             }
+            boolean imeiDisabled = options.optBoolean("imeiDisabled", false);
             if (imeiDisabled) {
                 builder.imeiDisabled();
             }
-            configuration = builder.adEnabled(adEnabled).oaid(oaid).gaid(gaid).build();
+            configuration = builder.build();
+
+            Log.d(TAG, String.format("adEnabled=%s, oaid=%s, gaid=%s, macDisabled=%s, imeiDisabled= %s",
+                    configuration.isAdEnabled(), configuration.getOaid(), configuration.getGaid(),
+                    configuration.isMacDisabled(), configuration.isImeiDisabled()));
+
         } else {
             Log.d(TAG, "options is null");
         }
     }
 
     public void init(IWebview pWebview, JSONArray array) {
-        boolean permission = array.optBoolean(0, false);
-        init(pWebview, permission);
-    }
-
-    private void init(IWebview pWebview, boolean permission) {
-        Log.d(TAG, "init, need permission is " + permission);
-        callInit = true;
-        if (permission) {
-            initWithPermission(pWebview);
-        } else {
-            initialized(pWebview);
-        }
+        initialized(pWebview);
     }
 
     private String setNull(String res) {
@@ -94,30 +78,29 @@ public class OpenInstallApiManager extends StandardFeature {
         return res;
     }
 
-    private void initWithPermission(final IWebview pWebview) {
-        Log.d(TAG, "initWithPermission");
-        final Context context = pWebview.getContext();
-        int result = PermissionUtil.checkSelfPermission(pWebview.getActivity(), Manifest.permission.READ_PHONE_STATE);
-        if (result != 0) {
-            Log.d(TAG, "Permission result = " + result + ", request READ_PHONE_STATE permission");
-            PermissionUtil.requestSystemPermissions(pWebview.getActivity(), new String[]{Manifest.permission.READ_PHONE_STATE}, 999, new PermissionUtil.Request() {
-                @Override
-                public void onGranted(String s) {
-                    Log.d(TAG, "onGranted = " + s);
-                    initialized(pWebview);
-                }
-
-                @Override
-                public void onDenied(String s) {
-                    Log.d(TAG, "onDenied = " + s);
-                    initialized(pWebview);
-                }
-            });
-        } else {
-            initialized(pWebview);
-        }
-    }
-
+//    public void requestPermission(final IWebview pWebview, JSONArray array) {
+//        Log.d(TAG, "requestPermission");
+//        final String callBackID = array.optString(0);
+//        int result = PermissionUtil.checkSelfPermission(pWebview.getActivity(), Manifest.permission.READ_PHONE_STATE);
+//        if (result != 0) {
+//            Log.d(TAG, "Permission result = " + result + ", request READ_PHONE_STATE permission");
+//            PermissionUtil.requestSystemPermissions(pWebview.getActivity(), new String[]{Manifest.permission.READ_PHONE_STATE}, 999, new PermissionUtil.Request() {
+//                @Override
+//                public void onGranted(String s) {
+//                    Log.d(TAG, "onGranted = " + s);
+//                    JSUtil.execCallback(pWebview, callBackID, "true", JSUtil.OK, false);
+//                }
+//
+//                @Override
+//                public void onDenied(String s) {
+//                    Log.d(TAG, "onDenied = " + s);
+//                    JSUtil.execCallback(pWebview, callBackID, "false", JSUtil.OK, false);
+//                }
+//            });
+//        } else {
+//            JSUtil.execCallback(pWebview, callBackID, "true", JSUtil.OK, false);
+//        }
+//    }
 
     private void initialized(final IWebview pWebview) {
         OpenInstall.init(pWebview.getContext(), configuration);
@@ -141,10 +124,6 @@ public class OpenInstallApiManager extends StandardFeature {
     }
 
     public void registerWakeUpHandler(final IWebview pWebview, JSONArray array) {
-        if (!callInit) {
-            boolean permission = array.optBoolean(1, false);
-            init(pWebview, permission);
-        }
         Log.d(TAG, "registerWakeUpHandler");
         String callBackID = array.optString(0);
 
