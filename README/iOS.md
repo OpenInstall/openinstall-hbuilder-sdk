@@ -157,4 +157,17 @@
 }
 ```
 
+#### 广告平台
+##### 广告平台渠道和ASA渠道配置
 
+1、将 `iOS/OpenInstallApiManager.m` 文件替换为 `ad-track/OpenInstallApiManager.m ` 文件  
+
+2、需要在Info.plist文件中配置权限  
+``` xml
+<key>NSUserTrackingUsageDescription</key>
+<string>请允许，以获取和使用您的IDFA</string>
+```
+
+备注：2021年，iOS14.5苹果公司将正式启用idfa新隐私政策，详情可参考：[广告平台对接iOS集成指引](https://www.openinstall.io/doc/ad_ios.html)
+
+ASA渠道相关详细文档参考：[ASA渠道使用指南](https://www.openinstall.io/doc/asa.html)

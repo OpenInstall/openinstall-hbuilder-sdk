@@ -82,12 +82,4 @@ function reportEffectPoint(){
 
 ### iOS 平台
 
-1、将 `iOS/OpenInstallApiManager.m` 文件替换为 `ad-track/OpenInstallApiManager.m ` 文件  
-
-2、需要在Info.plist文件中配置权限  
-``` xml
-<key>NSUserTrackingUsageDescription</key>
-<string>请允许，以获取和使用您的IDFA</string>
-```
-
-备注：2021年，iOS14.5苹果公司将正式启用idfa新隐私政策，详情可参考：[广告平台对接iOS集成指引](https://www.openinstall.io/doc/ad_ios.html)
+请参考 [iOS 集成指南 -> 广告平台](README/iOS.md#广告平台)

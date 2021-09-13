@@ -86,9 +86,22 @@
  * @param adid 广告标识符，需用户自己获取并传入，默认为空，传入nil则与初始化方法 initwithDelegate: 一致
  * @param delegate 委托方法所在的类的对象
  * @discussion 1、只有需要使用“广告平台渠道”进行广告效果监测的用户才需调用，2、需开启后台开关，位置："iOS集成"->"iOS应用配置"->"广告平台对接"
- * ***详细文档请查看：***
+ * ***详细文档请查看：https://www.openinstall.io/doc/ad_ios.html***
  */
 + (void)initWithDelegate:(nullable id<OpenInstallDelegate>)delegate advertisingId:(NSString *_Nullable)adid;
+
+
+#pragma mark - added in v2.5.4
+
+/**
+ * 初始化sdk，并传入广告相关参数
+ * 详细参考官网文档
+ *
+ * @param delegate 委托方法所在的类的对象
+ * @param attribution 广告相关参数，如ASA token，idfa等，@{OP_ASA_Token:@"your ASA Token"}
+ * 参考文档 https://www.openinstall.io/doc/asa.html
+ */
++ (void)initWithDelegate:(nullable id<OpenInstallDelegate>)delegate adsAttribution:(NSDictionary *_Nullable)attribution;
 
 
 #pragma mark - Deprecated in v2.2.0（已废弃）
@@ -110,7 +123,7 @@
 #pragma mark - added in v2.2.0
 
 /**
- * 开发者在需要获取用户安装app后由web网页传递过来的”动态参数“（如邀请码、游戏房间号，渠道编号等）时调用该方法,可第一时间返回数据，可在任意位置调用
+ * 开发者在需要获取用户安装app后由web网页传递过来的”动态参数“（如邀请码、游戏房间号，渠道编号，ASA渠道编号等）时调用该方法,可第一时间返回数据，可在任意位置调用
  *
  * v2.2.1后默认回调超时时长由5秒(s)修改为为8秒(s)，如无特殊需求，请用此方法，否则可使用高级API
  *
@@ -127,7 +140,7 @@
 
 
 /**
- * 开发者在需要获取用户安装app后由web网页传递过来的”动态参数“（如邀请码、游戏房间号，渠道编号等）时调用该方法,可第一时间返回数据，可在任意位置调用
+ * 开发者在需要获取用户安装app后由web网页传递过来的”动态参数“（如邀请码、游戏房间号，渠道编号，ASA渠道编号等）时调用该方法,可第一时间返回数据，可在任意位置调用
  *
  * @param timeoutInterval 可设置回调超时时长，单位秒(s)
  * @param completedBlock 回调block，在主线程（UI线程）回调
@@ -195,6 +208,17 @@
  * @param effectValue 效果点值（如果是人民币金额，请以分为计量单位）
  */
 -(void)reportEffectPoint:(NSString *_Nonnull)effectID effectValue:(long)effectValue;
+
+
+/**
+ * 上报广告相关参数
+ *
+ * e.g.ASA相关token等
+ *
+ * @param attribution 广告相关参数配置
+ */
+-(void)reportAdsAttribution:(NSDictionary *)attribution __deprecated_msg("Deprecated，请参考方法<code>initWithDelegate:adsAttribution:</code>");;
+
 
 @end
 
