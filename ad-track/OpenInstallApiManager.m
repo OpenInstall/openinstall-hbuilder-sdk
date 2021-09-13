@@ -8,9 +8,8 @@
 
 #import "OpenInstallApiManager.h"
 #import <AdSupport/AdSupport.h>
-#if defined(__IPHONE_14_0)
 #import <AppTrackingTransparency/AppTrackingTransparency.h>//适配iOS14
-#endif
+#import <AdServices/AAAttribution.h>
 
 @implementation OpenInstallApiManager
 
@@ -25,25 +24,36 @@
 - (void) onAppStarted:(NSDictionary*)options{
     NSLog(@"5+ WebApp启动时触发");
     // 可以在这个方法里向Core注册扩展插件的JS
+    [self openinstallInit];
+}
+
+- (void)openinstallInit{
+    if (@available(iOS 14, *)) {
+        [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
+            [self OpInit];
+        }];
+    }else{
+        [self OpInit];
+    }
+}
+
+- (void)OpInit{
     
-    #if defined(__IPHONE_14_0)
-        if (@available(iOS 14, *)) {
-            [ATTrackingManager requestTrackingAuthorizationWithCompletionHandler:^(ATTrackingManagerAuthorizationStatus status) {
-                NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-                [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];//不管用户是否授权，都要初始化
-                [OpenInstallStorage share].isInit = YES;
-            }];
-        }else{
-            NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-            [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];
-            [OpenInstallStorage share].isInit = YES;
-        }
-    #else
-        NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
-        [OpenInstallSDK initWithDelegate:self advertisingId:idfaStr];
-        [OpenInstallStorage share].isInit = YES;
-    #endif
+    //ASA广告归因
+    NSMutableDictionary *config = [[NSMutableDictionary alloc]init];
+    if (@available(iOS 14.3, *)) {
+        NSError *error;
+        NSString *token = [AAAttribution attributionTokenWithError:&error];
+        [config setValue:token forKey:OP_ASA_Token];
+    }
     
+    //第三方广告平台统计代码
+    NSString *idfaStr = [[[ASIdentifierManager sharedManager] advertisingIdentifier] UUIDString];
+    [config setValue:idfaStr forKey:OP_Idfa_Id];
+
+    [OpenInstallSDK initWithDelegate:self adsAttribution:config];//初始化API
+
+    [OpenInstallStorage share].isInit = YES;
 }
 
 -(void)registerWakeUpHandler:(PGMethod*)command{
@@ -58,7 +68,7 @@
         storage.wakeupDic = nil;
     }else{
 
-        [OpenInstallSDK initWithDelegate:self];
+        [self openinstallInit];
         
         if (storage.userActivity) {
             [OpenInstallSDK continueUserActivity:storage.userActivity];
@@ -74,7 +84,7 @@
 -(void)getInstall:(PGMethod*)command{
     
     NSString* cbId = [command.arguments objectAtIndex:0];
-    float outtime = 10.0f;
+    float outtime = 15.0f;
     
     if (command.arguments.count > 2) {
         if([[command.arguments objectAtIndex:1] isKindOfClass:[NSNumber class]]){

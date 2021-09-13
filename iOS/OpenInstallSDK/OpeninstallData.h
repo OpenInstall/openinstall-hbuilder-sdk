@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString *const OP_Idfa_Id;
+extern NSString *const OP_ASA_Token;
+
 @interface OpeninstallData : NSObject<NSCopying>
 
 - (instancetype)initWithData:(NSDictionary *)data
