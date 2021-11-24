@@ -79,7 +79,7 @@
     <!-- openinstall appkey 配置 -->
     <meta-data
         android:name="com.openinstall.APP_KEY"
-        android:value="OPENINSTALL_APPKEY"/>
+        android:value="openinstall为应用分配的appkey"/>
 
     <activity
         android:name="io.dcloud.PandoraEntry"
@@ -101,11 +101,11 @@
             <category android:name="android.intent.category.DEFAULT"/>
             <category android:name="android.intent.category.BROWSABLE"/>
 
-            <data android:scheme="OPENINSTALL_SCHEME"/>
+            <data android:scheme="openinstall为应用分配的scheme"/>
         </intent-filter>
     </activity>
 </application>
 ```
-> 注意：使用获取的`AppKey` 和 `scheme`替换示例代码中的 `OPENINSTALL_APPKEY` 和 `OPENINSTALL_SCHEME` 。
+> 注意：将openinstall控制台获取的`AppKey` 和 `scheme`替换到相应位置 。
 
 

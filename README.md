@@ -72,8 +72,13 @@ function reportEffectPoint(){
 ```
 
 ## 导出apk/ipa包并上传
-代码集成完毕后，需要导出安装包上传openinstall后台，openinstall会自动完成所有的应用配置工作。  
-上传完成后即可开始在线测试，体验完整的App安装/拉起流程；待测试无误后，再完善下载配置信息。  
+集成完毕后，导出iOS/Android安装包上传[openinstall控制台](https://developer.openinstall.io/)，openinstal会检查应用的集成配置  
+![上传ipa安装包](https://res.cdn.openinstall.io/doc/upload-ipa-jump.png)
+
+
+上传完成后即可开始在线模拟测试，体验完整的App安装/跳转流程  
+![在线测试](https://res.cdn.openinstall.io/doc/js-test.png)
+
 
 ---
 <a id=ad></a>
@@ -92,7 +97,7 @@ function reportEffectPoint(){
 传入参数说明：   
 | 参数名| 参数类型 | 描述 |  
 | --- | --- | --- |
-| adEnabled| bool | 是否需要 SDK 获取广告追踪相关参数 |
+| adEnabled| bool | 广告平台接入开关（必须） |
 | macDisabled | bool | 是否禁止 SDK 获取 mac 地址 |
 | imeiDisabled | bool | 是否禁止 SDK 获取 imei |
 | gaid | string | 通过 google api 获取到的 advertisingId，SDK 将不再获取gaid |
