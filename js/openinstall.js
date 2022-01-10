@@ -37,6 +37,14 @@ document.addEventListener( "plusready",  function(){
             callbackID = B.callbackId(success, null);
             return B.exec(_BARCODE, "getInstall", [callbackID, timeout]);
         },
+        // 获取安装来源数据 (仅支持Android)
+        getInstallCanRetry : function (successCallback, timeout) {
+            var success = typeof successCallback !== 'function' ? null : function(args) {
+                successCallback(args);
+            },
+            callbackID = B.callbackId(success, null);
+            return B.exec(_BARCODE, "getInstallCanRetry", [callbackID, timeout]);
+        },
         // 注册上报
         reportRegister : function () {
             return B.exec(_BARCODE, "reportRegister", []);
