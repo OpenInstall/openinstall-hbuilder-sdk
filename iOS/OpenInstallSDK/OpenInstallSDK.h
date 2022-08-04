@@ -110,7 +110,7 @@
  * 初始化OpenInstall SDK (已废弃,请参考方法 initwithDelegate: 已使用该初始化方法的用户也可继续使用)
  *
  * @param appKey 控制中心创建应用获取appKey
- * @param delegate 委托方法(getInstallParamsFromOpenInstall和 getWakeUpParamsFromOpenInstall)所在的类的对象
+ * @param delegate 委托方法(getWakeUpParams)所在的类的对象
  * @discussion 老版本sdk升级过来可延用该api
  */
 +(void)setAppKey:(nonnull NSString *)appKey withDelegate:(nullable id<OpenInstallDelegate>)delegate __deprecated_msg("Deprecated in v2.2.0，请参考方法<code>initwithDelegate</code>");
@@ -125,13 +125,13 @@
 /**
  * 开发者在需要获取用户安装app后由web网页传递过来的”动态参数“（如邀请码、游戏房间号，渠道编号，ASA渠道编号等）时调用该方法,可第一时间返回数据，可在任意位置调用
  *
- * v2.2.1后默认回调超时时长由5秒(s)修改为为8秒(s)，如无特殊需求，请用此方法，否则可使用高级API
+ * 默认回调超时时长修改为为15秒(s)，如无特殊需求，请用此方法，否则可使用高级API
  *
  * @param completedBlock 回调block，在主线程（UI线程）回调
  *
  * @discussion
  1、不要自己保存动态安装参数，在每次需要用到参数时，请调用该方法去获取；
- 2、该方法默认超时为8秒，尽量写在业务场景需要参数的位置调用（在业务场景时，网络一般都是畅通的），例如，可以选择在用户注册成功后调用该方法获取参数，对用户进行奖励。原因是iOS首次安装、首次启动的app，会询问用户获取网络权限，用户允许后SDK才能正常联网去获取参数。如果调用过早，可能导致网络权限还未允许就被调用，导致参数无法及时拿到，误以为参数不存在（此时getInstallParmsCompleted法已超时，回调返回空）；
+ 2、该方法默认超时为15秒，尽量写在业务场景需要参数的位置调用（在业务场景时，网络一般都是畅通的），例如，可以选择在用户注册成功后调用该方法获取参数，对用户进行奖励。原因是iOS首次安装、首次启动的app，会询问用户获取网络权限，用户允许后SDK才能正常联网去获取参数。如果调用过早，可能导致网络权限还未允许就被调用，导致参数无法及时拿到，误以为参数不存在（此时getInstallParmsCompleted法已超时，回调返回空）；
  3. 如果是业务需要，必须在application:didFinishLaunchingWithOptions方法中获取参数，可调用下面高级API，修改超时时长，比如15秒或更长，如果只是拿参数在后台“悄悄地”进行数据统计的情况，超时时长设置为半个小时或更长都是ok的，根据需要来。
  
  * ***该方法可重复获取参数，如需在首次安装才获取安装参数，请自行判断，参考https://www.openinstall.io/doc/ios_sdk_faq.html***
