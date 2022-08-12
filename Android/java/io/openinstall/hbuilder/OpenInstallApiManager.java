@@ -67,6 +67,16 @@ public class OpenInstallApiManager extends StandardFeature {
         }
     }
 
+    public void clipBoardEnabled(IWebview pWebview, JSONArray array){
+        boolean enabled = array.optBoolean(0, true);
+        OpenInstall.clipBoardEnabled(enabled);
+    }
+
+    public void serialEnabled(IWebview pWebview, JSONArray array){
+        boolean enabled = array.optBoolean(0, true);
+        OpenInstall.serialEnabled(enabled);
+    }
+
     public void init(IWebview pWebview, JSONArray array) {
         initialized(pWebview);
     }

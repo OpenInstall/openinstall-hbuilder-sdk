@@ -16,6 +16,16 @@ document.addEventListener( "plusready",  function(){
             return B.exec(_BARCODE, "config", [options]);
         },
 
+        // (仅支持Android)
+        serialEnabled : function(enabled){
+            return B.exec(_BARCODE, "serialEnabled", [enabled]);
+        },
+
+        // (仅支持Android)
+        clipBoardEnabled : function(enabled){
+            return B.exec(_BARCODE, "clipBoardEnabled", [enabled]);
+        },
+
         // 初始化
         init : function () {
             return B.exec(_BARCODE, "init", []);
