@@ -10,6 +10,7 @@
 
 extern NSString *const OP_Idfa_Id;
 extern NSString *const OP_ASA_Token;
+extern NSString *const OP_ASA_isDev;//added in v2.5.6
 
 @interface OpeninstallData : NSObject<NSCopying>
 
